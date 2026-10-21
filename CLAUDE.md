@@ -48,6 +48,18 @@ Không over-engineering — đây là mini project sinh viên.
 - Ví dụ: `Initial project setup`, `Implement histogram equalization`, `Fix matrix calculation`.
 - **Không** dùng Conventional Commits (không có tiền tố `feat:`, `fix:`, `chore:`, v.v.).
 
+## Quy tắc auto commit và auto push
+
+- Sau mỗi công việc được giao đã hoàn thành và kiểm tra thành công (test pass, không lỗi),
+  tự động commit và push lên `origin/main` mà không cần hỏi lại.
+- Trước mỗi commit: chạy `git status` và `git diff --cached --name-only` để đảm bảo không có
+  file nhạy cảm hoặc dữ liệu tài liệu học bị staging.
+- Không tạo commit rỗng khi không có thay đổi thực sự về source hoặc cấu hình.
+- Không push code chưa kiểm tra, code lỗi, hoặc thay đổi chưa được yêu cầu.
+- Không `--force` push, không xóa branch, không ghi đè công việc người khác.
+- Nếu push thất bại, báo lý do và giữ nguyên trạng thái an toàn, không tự tìm cách vượt qua
+  quyền truy cập.
+
 ## Phạm vi hiện tại (V1)
 
 - Chỉ Python + NumPy + Streamlit + pytest.
