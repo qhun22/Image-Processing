@@ -18,6 +18,27 @@ trong tài liệu `docs/`. Không dùng AI, OCR, RAG trong giai đoạn này.
 - Không triển khai bất kỳ thuật toán nào trong 7 dạng bài khi chưa có xác nhận rõ ràng về
   công thức và phương pháp giải từ tài liệu.
 
+## Kết luận đã xác nhận cho Dạng 2 và Dạng 7 (sau kiểm toán nhiều vòng)
+
+- **Dạng 2 (tách ngưỡng tự động):** Công thức `F(g)=A(g)*B(g)-1` với
+  `A(g)=t(g)/(P-t(g))`, `B(g)=[m(g)-m(G-1)]²` đã được **chứng minh bằng đại số tổng quát**
+  (không chỉ số liệu cụ thể) là tương đương `A(g)*B(g) ≡ ω₀·ω₁·(μ₀-μ₁)²` — chính là phương
+  sai liên lớp Otsu chuẩn, chỉ lệch hằng số cộng `-1` (không đổi vị trí cực đại). Dù vậy,
+  **PHẢI triển khai đúng công thức của tài liệu viết ra** (A, B, F theo đúng dạng trên,
+  dùng m(G-1) là trung bình toàn cục chứ không phải μ₁ của riêng lớp trên), **không** thay
+  bằng công thức Otsu "chuẩn" (`ω₀ω₁(μ₀-μ₁)²`) hay hàm có sẵn (`cv2.threshold(..., THRESH_OTSU)`)
+  dù chúng tương đương toán học — vì các bước trung gian A(g), B(g) phải khớp đúng cách
+  tài liệu trình bày để học sinh đối chiếu lời giải.
+- **Dạng 7 (nhân chập tổng quát):** Anchor (điểm neo) đã xác nhận bằng 2 ví dụ số đầy đủ
+  (BÀI 4.pdf, mặt nạ 2×2) khớp 100% với công thức 2.1 **viết nguyên văn** (`I(x+i,y+j)*T(i,j)`,
+  `i,j=0..m-1`, không dịch chuyển). Đây là quy tắc áp dụng cho **Dạng 7 nói chung**.
+  Tài liệu BÀI 7 (toán tử Laplace, phát hiện biên — **không thuộc 7 dạng bài, là chương khác**)
+  có công thức đại số riêng `2I(x,y)-I(x-1,y)-I(x+1,y)+...` tự nhiên đối xứng quanh tâm —
+  đây là đặc thù của phép đạo hàm bậc 2 Laplace, **không phải quy tắc anchor của công thức 2.1
+  tổng quát**. **Không được dùng tính đối xứng của Laplace để suy ra hay thay đổi anchor của
+  Dạng 7** — hai ngữ cảnh độc lập, không được trộn lẫn. Nếu cần áp dụng Dạng 7 với mặt nạ
+  3×3 trở lên (chưa có ví dụ số đầy đủ để verify), dùng công thức 2.1 nguyên văn làm mặc định.
+
 ## Kiến trúc
 
 - `algorithms/`: logic thuật toán thuần Python/NumPy, độc lập hoàn toàn với giao diện.
