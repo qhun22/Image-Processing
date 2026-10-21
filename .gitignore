@@ -1,0 +1,49 @@
+# Local-only data and documents (never push to GitHub)
+docs/
+data/
+datasets/
+uploads/
+outputs/
+local_notes/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+.venv/
+venv/
+env/
+build/
+dist/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Streamlit secrets
+.streamlit/secrets.toml
+
+# Environment / secrets
+.env
+.env.*
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Logs and temp files
+*.log
+*.tmp
+*.bak
+
+# Data/image files not meant for source control
+*.pdf
+*.jpg
+*.jpeg
+*.png
+*.bmp
+*.tiff
