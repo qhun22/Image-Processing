@@ -5,6 +5,7 @@ datasets/
 uploads/
 outputs/
 local_notes/
+_pdf_extract_tmp/
 
 # Python
 __pycache__/
