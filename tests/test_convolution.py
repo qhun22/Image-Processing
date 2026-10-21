@@ -52,12 +52,27 @@ def test_rejects_ragged_kernel():
 
 
 def test_does_not_flip_kernel():
-    # Nếu kernel bị lật, kết quả sẽ khác. Dùng kernel bất đối xứng để kiểm tra rõ ràng.
-    image = [[1, 0], [0, 0]]
-    kernel = [[0, 1], [0, 0]]  # chỉ phần tử (0,1)=1
+    # Ma trận và kernel đều bất đối xứng hoàn toàn, để lật/không lật kernel cho ra
+    # kết quả khác nhau rõ ràng TẠI MỌI VỊ TRÍ (không chỉ 1 ô trùng hợp bằng 0).
+    image = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+    kernel = [[1, 2], [3, 4]]  # bất đối xứng: không có trục đối xứng nào
     out = convolve(image, kernel)
-    # I'(0,0) = I(0,0)*0 + I(0,1)*1 = 1*0 + 0*1 = 0 (theo công thức 2.1 không lật)
-    assert out["result"][0, 0] == 0
+
+    expected_no_flip = np.array([
+        [37, 47, 21],
+        [67, 77, 33],
+        [23, 26, 9],
+    ])
+    expected_if_flipped = np.array([
+        [23, 33, 24],
+        [53, 63, 42],
+        [52, 59, 36],
+    ])
+
+    assert np.array_equal(out["result"], expected_no_flip)
+    assert not np.array_equal(out["result"], expected_if_flipped), (
+        "Kết quả trùng với trường hợp kernel bị lật — công thức 2.1 đã bị lật sai."
+    )
 
 
 @pytest.mark.skipif(not GOLDEN_PATH.exists(), reason="golden test data local-only, not present")

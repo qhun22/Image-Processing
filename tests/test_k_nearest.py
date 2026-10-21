@@ -51,14 +51,43 @@ def test_rejects_k_out_of_range():
         k_nearest_mean_filter([[1, 2], [3, 4]], window_size=3, threshold=1, k=10)
 
 
-def test_tie_break_flagged_when_distinct_values_tie():
-    # Cửa sổ có nhiều giá trị khác nhau đồng khoảng cách tới tâm: không được âm thầm
-    # trả về một đáp án chắc chắn mà không cảnh báo.
-    image = [[0, 2], [2, 0]]  # center=0 tại (0,0): lân cận 2 và 2 (giống nhau, không tie thật)
+def test_no_false_positive_tie_when_tied_values_are_identical():
+    # Cửa sổ có các giá trị đồng khoảng cách nhưng BẰNG NHAU (toàn số 0 do padding) không
+    # phải là một tie thực sự (chọn phần tử nào trong số các giá trị giống hệt nhau cũng
+    # cho cùng kết quả) -> không được báo cờ tie_break_used một cách thừa.
+    image = [[0, 2], [2, 0]]
     out = k_nearest_mean_filter(image, window_size=3, threshold=100, k=2)
-    # Trường hợp này không có tie giữa giá trị KHÁC NHAU (toàn số 0 padding bằng nhau),
-    # nên không bắt buộc phải cảnh báo - test chỉ xác nhận field tồn tại và là bool.
-    assert isinstance(out["tie_break_used_anywhere"], bool)
+    assert out["tie_break_used_anywhere"] is False
+
+
+def test_genuine_tie_between_two_different_values_at_k_boundary():
+    # Thiết kế ma trận sao cho tại ranh giới chọn k, có đúng 2 giá trị KHÁC NHAU (3 và 7)
+    # cùng khoảng cách (=2) tới pixel trung tâm (giá trị 5). Với k=2: chọn center (dist 0)
+    # + một trong {3,7} (dist 2, tie thật). Hai lựa chọn cho TBk khác hẳn nhau:
+    #   chọn 3 -> TBk=(5+3)/2=4
+    #   chọn 7 -> TBk=(5+7)/2=6
+    # Đây là bằng chứng trực tiếp rằng việc chọn sai gây ra hậu quả khác biệt lên kết quả,
+    # không phải một chi tiết vô hại.
+    image = [
+        [9, 9, 9],
+        [9, 5, 9],
+        [3, 9, 7],
+    ]
+    out = k_nearest_mean_filter(image, window_size=3, threshold=0, k=2)
+    log = next(l for l in out["window_logs"] if l["position"] == (1, 1))
+
+    assert log["tie_break_used"] is True
+    assert out["tie_break_used_anywhere"] is True
+
+    # Quy tắc tạm thời hiện tại (thứ tự quét trái->phải, trên->xuống) chọn giá trị 3
+    # (xuất hiện ở vị trí (2,0), trước 7 ở vị trí (2,2)) -> TBk=4. Đây LÀ MỘT GIẢ ĐỊNH
+    # CHƯA CÓ CĂN CỨ TỪ TÀI LIỆU, test này chỉ xác nhận hành vi hiện tại của code (để
+    # phát hiện thay đổi không cố ý), không khẳng định đây là đáp án đúng duy nhất.
+    assert log["k_nearest_values"] == [5.0, 3.0]
+    assert log["tbk_rounded"] == 4
+    # Nếu tie được giải quyết theo hướng ngược lại (chọn 7), kết quả sẽ là 6 - khác hẳn.
+    alternative_tbk = round((5 + 7) / 2)
+    assert alternative_tbk != log["tbk_rounded"], "Tie thực sự phải tạo ra 2 kết quả khác nhau rõ ràng."
 
 
 def test_does_not_mutate_input():
