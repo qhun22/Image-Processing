@@ -1,5 +1,7 @@
 # Local-only data and documents (never push to GitHub)
-docs/
+docs/*
+!docs/*.pdf
+docs/audit/
 data/
 datasets/
 uploads/
@@ -43,6 +45,7 @@ Thumbs.db
 
 # Data/image files not meant for source control
 *.pdf
+!docs/*.pdf
 *.jpg
 *.jpeg
 *.png
